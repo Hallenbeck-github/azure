@@ -20,12 +20,6 @@
                 "description": "The FQDN of the Active Directory Domain to be created"
             }
         },
-        "dnsPrefix": {
-            "type": "string",
-            "metadata": {
-                "description": "The DNS prefix for the public IP address used by the Load Balancer"
-            }
-        },
         "vmSize": {
             "type": "string",
             "defaultValue": "Standard_D2s_v3",
@@ -58,44 +52,13 @@
     "variables": {
         "virtualNetworkName": "adVNET",
         "virtualNetworkAddressRange": "10.0.0.0/16",
-        "adLBFE": "LBFE",
-        "adLBBE": "LBBE",
-        "adRDPNAT": "adRDP",
         "adNicName": "adNic",
         "adNicIPAddress": "10.0.0.4",
         "adVMName": "adVM",
         "adSubnetName": "adSubnet",
-        "adSubnetAddressPrefix": "10.0.0.0/24",
-        "publicIPAddressName": "adPublicIP",
-        "adAvailabilitySetName": "adAvailabiltySet",
-        "adLBName": "adLoadBalancer"
+        "adSubnetAddressPrefix": "10.0.0.0/24"
     },
     "resources": [
-        {
-            "type": "Microsoft.Network/publicIPAddresses",
-            "apiVersion": "2019-02-01",
-            "name": "[variables('publicIPAddressName')]",
-            "location": "[parameters('location')]",
-            "properties": {
-                "publicIPAllocationMethod": "Static",
-                "dnsSettings": {
-                    "domainNameLabel": "[parameters('dnsPrefix')]"
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Compute/availabilitySets",
-            "apiVersion": "2019-03-01",
-            "location": "[parameters('location')]",
-            "name": "[variables('adAvailabilitySetName')]",
-            "properties": {
-                "PlatformUpdateDomainCount": 20,
-                "PlatformFaultDomainCount": 2
-            },
-            "sku": {
-                "name": "Aligned"
-            }
-        },
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-11-01",
@@ -125,54 +88,13 @@
                 }
             }
         },
-        {
-            "type": "Microsoft.Network/loadBalancers",
-            "apiVersion": "2019-02-01",
-            "name": "[variables('adLBName')]",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-                "[variables('publicIPAddressName')]"
-            ],
-            "properties": {
-                "frontendIPConfigurations": [
-                    {
-                        "name": "[variables('adLBFE')]",
-                        "properties": {
-                            "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
-                            }
-                        }
-                    }
-                ],
-                "backendAddressPools": [
-                    {
-                        "name": "[variables('adLBBE')]"
-                    }
-                ],
-                "inboundNatRules": [
-                    {
-                        "name": "[variables('adRDPNAT')]",
-                        "properties": {
-                            "frontendIPConfiguration": {
-                                "id": "[resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', variables('adLBName'), variables('adLBFE'))]"
-                            },
-                            "protocol": "Tcp",
-                            "frontendPort": 3389,
-                            "backendPort": 3389,
-                            "enableFloatingIP": false
-                        }
-                    }
-                ]
-            }
-        },
-        {
+                {
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2019-02-01",
             "name": "[variables('adNicName')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "VNet",
-                "[variables('adLBName')]"
+                "VNet"
             ],
             "properties": {
                 "ipConfigurations": [
@@ -183,17 +105,7 @@
                             "privateIPAddress": "[variables('adNicIPAddress')]",
                             "subnet": {
                                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('adSubnetName'))]"
-                            },
-                            "loadBalancerBackendAddressPools": [
-                                {
-                                    "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('adLBName'), variables('adLBBE'))]"
-                                }
-                            ],
-                            "loadBalancerInboundNatRules": [
-                                {
-                                    "id": "[resourceId('Microsoft.Network/loadBalancers/inboundNatRules', variables('adLBName'), variables('adRDPNAT'))]"
-                                }
-                            ]
+                            }
                         }
                     }
                 ]
@@ -205,16 +117,11 @@
             "name": "[variables('adVMName')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[variables('adNicName')]",
-                "[variables('adAvailabilitySetName')]",
-                "[variables('adLBName')]"
+                "[variables('adNicName')]"
             ],
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "[parameters('vmSize')]"
-                },
-                "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('adAvailabilitySetName'))]"
                 },
                 "osProfile": {
                     "computerName": "[variables('adVMName')]",
@@ -239,7 +146,7 @@
                     "dataDisks": [
                         {
                             "name": "[concat(variables('adVMName'), '_DataDisk')]",
-                            "caching": "ReadWrite",
+                            "caching": "none",
                             "createOption": "Empty",
                             "diskSizeGB": 20,
                             "managedDisk": {
