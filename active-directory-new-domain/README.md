@@ -1,8 +1,9 @@
-# Create a new Windows VM and create a new AD Forest, Domain and DC
+# Új Windows Server 2016 VM létrehozása AD Forest, Domain és DC Dextophoz
 
-This template will deploy a new VM (along with a new VNet and Load Balancer) and will configure it as a Domain Controller and create a new forest and domain.
+<img src="https://www.hlb.hu/wp-content/themes/pixi/assets/images/logo.svg"/>
+Ez a template létrehoz egy futó VM-et VNET-tel, Public IP-vel, ami egy  Domain Controller lesz új Foresttel.
 
-Click the button below to deploy
+Kérlek válassz a lenti lehetőségből.
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fhallenbeck-github%2Fazure%2Fmaster%2Factive-directory-new-domain%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
