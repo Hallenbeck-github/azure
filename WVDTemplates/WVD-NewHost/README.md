@@ -27,7 +27,7 @@ This template will
 
 **New Session Host**
 
-<a href=https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fhallenbeck-github%2Fazure%2Fmaster%2FWVDTemplates%2FWVD-NewHost%2FWVD-NewHost.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fhallenbeck-github%2Fazure%2Fmaster%2FWVDTemplates%2FWVD-NewHost%2FWVD-NewHost.json" target="_blank">
     <img src="https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.png"/>
 </a>
 <a href="http://armviz.io/#/?load=https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FHallenbeck-Github%2FWVDTemplates%2FWVD-NewHost%2FWVD-NewHost.json" target="_blank">
